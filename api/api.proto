@@ -1,0 +1,16 @@
+syntax = "proto3";
+package api;
+
+message Request {
+  string resource = 1;
+  string serviceID = 2;
+}
+
+message Response {
+  bool success = 1;
+}
+
+service Api {
+  rpc RequestLock(Request) returns (Response) {}
+  rpc ReleaseLock(Request) returns (Response) {}
+}
