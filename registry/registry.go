@@ -4,26 +4,26 @@ import "sync"
 
 // Register holds all the locks
 type Register struct {
-	resourceMap map[string]string
+	state map[string]string
 	sync.RWMutex
 }
 
 // NewRegister returns a new Register object instance
 func NewRegister() *Register {
-	return &Register{resourceMap: make(map[string]string)}
+	return &Register{state: make(map[string]string)}
 }
 
 func (rg *Register) load(key string) (string, bool) {
 	rg.RLock()
-	value, loaded := rg.resourceMap[key]
-	rg.RUnlock()
+	defer rg.RUnlock()
+	value, loaded := rg.state[key]
 	return value, loaded
 }
 
 func (rg *Register) store(key, value string) {
 	rg.Lock()
-	rg.resourceMap[key] = value
-	rg.Unlock()
+	defer rg.Unlock()
+	rg.state[key] = value
 }
 
 func (rg *Register) loadOrStore(key, value string) bool {
@@ -36,8 +36,8 @@ func (rg *Register) loadOrStore(key, value string) bool {
 
 func (rg *Register) delete(key string) {
 	rg.Lock()
-	delete(rg.resourceMap, key)
-	rg.Unlock()
+	defer rg.Unlock()
+	delete(rg.state, key)
 }
 
 // LockResource locks a resource to the specified service
