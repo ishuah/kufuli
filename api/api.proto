@@ -8,6 +8,7 @@ message Request {
 
 message Response {
   bool success = 1;
+  string error = 2;
 }
 
 service Api {
