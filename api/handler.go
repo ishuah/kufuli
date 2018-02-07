@@ -5,12 +5,13 @@ import (
 	"time"
 
 	"github.com/ishuah/kufuli/config"
+	"github.com/ishuah/kufuli/registry"
 	"golang.org/x/net/context"
 )
 
 // Server represents the gRPC server
 type Server struct {
-	register *Register
+	register *registry.Register
 	config   config.Config
 }
 
@@ -20,15 +21,15 @@ func NewServer() Server {
 	if err != nil {
 		log.Printf("Error: %v. Falling back to default values", err)
 	}
-	return Server{register: &Register{}, config: c}
+	return Server{register: registry.NewRegister(), config: c}
 }
 
-// attemptLock runs with retries in case resource is already locked
-func (s *Server) attemptLock(r *Request) (bool, string) {
+// attemptLockWithTimeout runs with retries in case resource is already locked
+func (s *Server) attemptLockWithTimeout(r *Request) (bool, string) {
 	success := false
 
 	for i := 0; i < s.config.MaxRetries; i++ {
-		if success = s.register.LockResource(r); success {
+		if success = s.register.LockResource(r.Resource, r.ServiceID); success {
 			break
 		}
 		log.Printf("failed to acquire lock %v, retrying in 6s", r)
@@ -44,14 +45,14 @@ func (s *Server) attemptLock(r *Request) (bool, string) {
 func (s *Server) RequestLock(ctx context.Context, r *Request) (*Response, error) {
 	log.Printf("Received lock request for %s", r.Resource)
 
-	success, err := s.attemptLock(r)
+	success, err := s.attemptLockWithTimeout(r)
 
 	return &Response{Success: success, Error: err}, nil
 }
 
 // ReleaseLock releases the specified resource
-func (s *Server) ReleaseLock(ctx context.Context, in *Request) (*Response, error) {
-	log.Printf("Received a release request for %s", in.Resource)
-	s.register.ReleaseResource(in)
+func (s *Server) ReleaseLock(ctx context.Context, r *Request) (*Response, error) {
+	log.Printf("Received a release request for %s", r.Resource)
+	s.register.ReleaseResource(r.Resource)
 	return &Response{Success: true}, nil
 }
