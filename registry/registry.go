@@ -15,6 +15,7 @@ type Register struct {
 	sync.RWMutex
 }
 
+// Service holds service identifier and expiry time
 type Service struct {
 	ServiceID string
 	Expiry    time.Time

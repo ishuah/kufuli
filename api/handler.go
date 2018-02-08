@@ -57,6 +57,7 @@ func (s *Server) ReleaseLock(ctx context.Context, r *Request) (*Response, error)
 	return &Response{Success: true}, nil
 }
 
+// BackgroundWorkers starts register clean up workers
 func (s *Server) BackgroundWorkers() {
 	staleLocks := make(chan string)
 	go s.register.FilterStaleLocks(staleLocks)
