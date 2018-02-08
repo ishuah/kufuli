@@ -18,6 +18,8 @@ func main() {
 	}
 	// create a server instance
 	s := api.NewServer()
+	// start registry cleanup goroutine
+	s.BackgroundWorkers()
 	// create a gRPC server object
 	grpcServer := grpc.NewServer()
 	// attach the Ping service to the server

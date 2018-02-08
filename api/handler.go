@@ -21,7 +21,7 @@ func NewServer() Server {
 	if err != nil {
 		log.Printf("Error: %v. Falling back to default values", err)
 	}
-	return Server{register: registry.NewRegister(), config: c}
+	return Server{register: registry.NewRegister(c), config: c}
 }
 
 // attemptLockWithTimeout runs with retries in case resource is already locked
@@ -55,4 +55,10 @@ func (s *Server) ReleaseLock(ctx context.Context, r *Request) (*Response, error)
 	log.Printf("Received a release request for %s", r.Resource)
 	s.register.ReleaseResource(r.Resource)
 	return &Response{Success: true}, nil
+}
+
+func (s *Server) BackgroundWorkers() {
+	staleLocks := make(chan string)
+	go s.register.FilterStaleLocks(staleLocks)
+	go s.register.CleanUpStaleLocks(staleLocks)
 }

@@ -1,35 +1,48 @@
 package registry
 
-import "sync"
+import (
+	"log"
+	"sync"
+	"time"
+
+	"github.com/ishuah/kufuli/config"
+)
 
 // Register holds all the locks
 type Register struct {
-	state map[string]string
+	state  map[string]*Service
+	config config.Config
 	sync.RWMutex
 }
 
-// NewRegister returns a new Register object instance
-func NewRegister() *Register {
-	return &Register{state: make(map[string]string)}
+type Service struct {
+	ServiceID string
+	Expiry    time.Time
 }
 
-func (rg *Register) load(key string) (string, bool) {
+// NewRegister returns a new Register object instance
+func NewRegister(config config.Config) *Register {
+	return &Register{state: make(map[string]*Service), config: config}
+}
+
+func (rg *Register) load(key string) (*Service, bool) {
 	rg.RLock()
 	defer rg.RUnlock()
-	value, loaded := rg.state[key]
-	return value, loaded
+	service, loaded := rg.state[key]
+	return service, loaded
 }
 
-func (rg *Register) store(key, value string) {
+func (rg *Register) store(key string, service *Service) {
 	rg.Lock()
 	defer rg.Unlock()
-	rg.state[key] = value
+	rg.state[key] = service
 }
 
 func (rg *Register) loadOrStore(key, value string) bool {
 	_, loaded := rg.load(key)
 	if !loaded {
-		rg.store(key, value)
+		service := &Service{ServiceID: value, Expiry: time.Now().Add(rg.config.MaxLockSpan)}
+		rg.store(key, service)
 	}
 	return loaded
 }
@@ -38,6 +51,32 @@ func (rg *Register) delete(key string) {
 	rg.Lock()
 	defer rg.Unlock()
 	delete(rg.state, key)
+}
+
+// FilterStaleLocks looks for locks that have expired and passes them to CleanUpStaleLocks
+func (rg *Register) FilterStaleLocks(staleLocks chan string) {
+	for {
+		time.Sleep(5 * time.Second)
+		t := time.Now()
+		rg.RLock()
+		for key, value := range rg.state {
+			if t.After(value.Expiry) {
+				log.Printf("Cleaning up long running lock on %s\n", key)
+				staleLocks <- key
+			}
+		}
+		rg.RUnlock()
+	}
+}
+
+// CleanUpStaleLocks deletes expired locks
+func (rg *Register) CleanUpStaleLocks(staleLocks chan string) {
+	for {
+		select {
+		case key := <-staleLocks:
+			rg.delete(key)
+		}
+	}
 }
 
 // LockResource locks a resource to the specified service

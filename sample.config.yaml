@@ -1,0 +1,4 @@
+max_retries: 10
+retry_delay: "500ms"
+max_lock_span: "10s"
+default_cleanup_delay: "5s"
