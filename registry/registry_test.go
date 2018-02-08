@@ -10,7 +10,6 @@ func TestRegistry(t *testing.T) {
 	rg := NewRegister()
 
 	resource0 := "disk0"
-	//resource1 := "disk1"
 	service0 := "sync"
 	service1 := "logger"
 
