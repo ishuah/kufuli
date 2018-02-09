@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -53,8 +54,12 @@ func (s *Server) RequestLock(ctx context.Context, r *Request) (*Response, error)
 // ReleaseLock releases the specified resource
 func (s *Server) ReleaseLock(ctx context.Context, r *Request) (*Response, error) {
 	log.Printf("Received a release request for %s", r.Resource)
-	s.register.ReleaseResource(r.Resource)
-	return &Response{Success: true}, nil
+	ok := s.register.ReleaseResource(r.Resource, r.ServiceID)
+	err := ""
+	if !ok {
+		err = fmt.Sprintf("Error: Could not release resource %s", r.Resource)
+	}
+	return &Response{Success: ok, Error: err}, nil
 }
 
 // BackgroundWorkers starts register clean up workers

@@ -48,10 +48,14 @@ func (rg *Register) loadOrStore(key, value string) bool {
 	return loaded
 }
 
-func (rg *Register) delete(key string) {
+func (rg *Register) delete(key string) bool {
 	rg.Lock()
 	defer rg.Unlock()
-	delete(rg.state, key)
+	_, ok := rg.state[key]
+	if ok {
+		delete(rg.state, key)
+	}
+	return ok
 }
 
 // FilterStaleLocks looks for locks that have expired and passes them to CleanUpStaleLocks
@@ -89,6 +93,11 @@ func (rg *Register) LockResource(resource, serviceID string) bool {
 }
 
 // ReleaseResource releases a previously locked resource
-func (rg *Register) ReleaseResource(resource string) {
-	rg.delete(resource)
+func (rg *Register) ReleaseResource(resource, serviceID string) bool {
+	service, loaded := rg.load(resource)
+
+	if loaded && service.ServiceID == serviceID {
+		return rg.delete(resource)
+	}
+	return false
 }
