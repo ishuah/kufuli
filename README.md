@@ -21,7 +21,7 @@ Run the instance:
 `./kufuli`
 
 ## Configuration
-This repo contains a (sample configuration file)[https://github.com/ishuah/kufuli/blob/master/sample.config.yaml]. To use it, copy the contents of `sample.config.yaml` to `config.yaml` and edit the values to your liking. If you don't create the `config.yaml` file, kufuli will fall back to default values defined in `config/config.go`.
+This repo contains a [sample configuration file](https://github.com/ishuah/kufuli/blob/master/sample.config.yaml). To use it, copy the contents of `sample.config.yaml` to `config.yaml` and edit the values to your liking. If you don't create the `config.yaml` file, kufuli will fall back to default values defined in `config/config.go`.
 
 The configurations are as follows
 <table>
