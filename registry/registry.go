@@ -57,7 +57,7 @@ func (rg *Register) delete(key string) {
 // FilterStaleLocks looks for locks that have expired and passes them to CleanUpStaleLocks
 func (rg *Register) FilterStaleLocks(staleLocks chan string) {
 	for {
-		time.Sleep(5 * time.Second)
+		time.Sleep(rg.config.CleanUpDelay)
 		t := time.Now()
 		rg.RLock()
 		for key, value := range rg.state {
