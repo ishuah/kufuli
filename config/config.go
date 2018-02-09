@@ -14,7 +14,7 @@ const (
 	DefaultRetryDelay = 500 * time.Millisecond
 	// DefaultLockSpan is used when max_lock_span is not set
 	DefaultLockSpan = 10 * time.Second
-	// DefaultCleanUpDelay is used when default_cleanup_span is not set
+	// DefaultCleanUpDelay is used when cleanup_span is not set
 	DefaultCleanUpDelay = 5 * time.Second
 )
 
@@ -23,7 +23,7 @@ type Config struct {
 	MaxRetries   int           `yaml:"max_retries"`
 	RetryDelay   time.Duration `yaml:"retry_delay"`
 	MaxLockSpan  time.Duration `yaml:"max_lock_span"`
-	CleanUpDelay time.Duration `yaml:"default_cleanup_delay"`
+	CleanUpDelay time.Duration `yaml:"cleanup_delay"`
 }
 
 // GetConfig returns a new Config instance

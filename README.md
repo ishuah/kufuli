@@ -20,6 +20,53 @@ You can now build the project:
 Run the instance:
 `./kufuli`
 
+## Configuration
+This repo contains a (sample configuration file)[https://github.com/ishuah/kufuli/blob/master/sample.config.yaml]. To use it, copy the contents of `sample.config.yaml` to `config.yaml` and edit the values to your liking. If you don't create the `config.yaml` file, kufuli will fall back to default values defined in `config/config.go`.
+
+The configurations are as follows
+<table>
+    <thead>
+        <tr>
+            <td>Field</td>
+            <td>Description</td>
+            <td>Type</td>
+            <td>Default</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>max_retries</td>
+            <td>Maximum number of retries when a client tries to obtain a lock</td>
+            <td>int</td>
+            <td>16</td>
+        </tr>
+        <tr>
+            <td>retry_delay</td>
+            <td>The interval length between retries</td>
+            <td>string</td>
+            <td>500ms</td>
+        </tr>
+        <tr>
+            <td>max_lock_span</td>
+            <td>Maximum duration a client can hold a lock</td>
+            <td>string</td>
+            <td>10s</td>
+        </tr>
+        <tr>
+            <td>default_cleanup_delay</td>
+            <td>Kufuli runs background services that release locks that have exceeded `max_lock_span`. This config dictates the interval between the checks.</td>
+            <td>string</td>
+            <td>5s</td>
+        </tr>
+    </tbody>
+</table>
+max_retries: 10
+retry_delay: "500ms"
+max_lock_span: "10s"
+default_cleanup_delay: "5s"
+
+
+
 ## Writing clients
 Clients in Go are supported using the `github.com/ishuah/kufuli/api` package.
 
