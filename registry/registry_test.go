@@ -3,11 +3,13 @@ package registry
 import (
 	"testing"
 
+	"github.com/ishuah/kufuli/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRegistry(t *testing.T) {
-	rg := NewRegister()
+	c, _ := config.GetConfig()
+	rg := NewRegister(c)
 
 	resource0 := "disk0"
 	service0 := "sync"
