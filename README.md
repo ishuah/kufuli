@@ -3,6 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ishuah/kufuli)](https://goreportcard.com/report/github.com/ishuah/kufuli)
 
 Kufuli is a centralized locking system for distributed, highly available systems. Written in Go and powered by gRPC.
+Built as a proof of concept.
 
 ## Installation
 There's currently no build system for this project, you'll have to build from source.
