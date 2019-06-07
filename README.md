@@ -123,7 +123,7 @@ You can run the above example as follows:
 You create a new client instance via `api.NewApiClient`. The client exposes two function, `RequestLock` and `ReleaseLock`. Both functions accept an `api.Request` pointer and return an `api.Response` and an `error`. Further documentation below.
 
 ## Support for other languages
-gPRC uses [protocol buffers](https://developers.google.com/protocol-buffers/docs/overview) which allows you to generate client and server interfaces from a `.proto` file. A lot of major languages are [supported](https://grpc.io/docs/).
+gRPC uses [protocol buffers](https://developers.google.com/protocol-buffers/docs/overview) which allows you to generate client and server interfaces from a `.proto` file. A lot of major languages are [supported](https://grpc.io/docs/).
 
 ### Example: Generating a python client
 Create a new directory, e.g `kufuli-client-py`.
